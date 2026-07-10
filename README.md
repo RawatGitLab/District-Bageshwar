@@ -1,96 +1,89 @@
-District Bageshwar - Geospatial Data Platform
+# 🗺️ District Bageshwar – GIS Viewer
 
-📖 Overview
-This project is a live geospatial data server and visualization platform designed specifically for district planners and administrators of Bageshwar. Its primary goal is to provide a centralized, real-time interface for accessing and visualizing critical spatial data for the Bageshwar district, including:
+An interactive, map-based portal for Almora District, built with React, TypeScript, Leaflet, and the Google Gemini API. The app lets citizens and administrators explore geospatial data, layers, and district information through a fast, modern web interface.
 
-Administrative Boundaries
+Live demo: https://district-Bageshwar.onrender.com/
 
-River and Stream Networks
+📖 About
+This repository hosts the Bageshwar GIS Viewer — a web application for visualizing geographic and administrative data for Bageshwar District, Uttarakhand. It combines an interactive Leaflet map with an Express/Node backend and Gemini-powered AI capabilities.
 
-Village-Level Geographic Information
-
-The application synchronizes with a secure database to ensure that the most current geographical shapefiles are available for analysis, planning, and decision-making.
-
-✨ Key Features
-Real-time Data Sync: Automatically connects to a secure database to download and update geographical boundaries, river streams, and village data for Bageshwar.
-
-Live Visualization: The server provides a dynamic view of the district's geography.
-
-Planner & Administrator Focus: The interface and data layers are curated for administrative and planning use-cases.
-
-MongoDB Integration: Utilizes MongoDB for data storage and streaming, enabling a responsive, live data feed.
-
-🚀 Live Demo
-A live version of the application is hosted on Render and can be accessed here:
-https://district-bageshwar.onrender.com
-
-Note: The live server may display "Awaiting MongoDB Live Stream" if the database is not currently active or streaming data. This is expected behavior when the backend data source is not publishing updates.
-
-🛠️ Technology Stack
-Backend: Node.js (Inferred)
-
-Database: MongoDB (for storing and streaming geospatial data)
-
-Hosting: Render
-
-Data Format: Spatial Shapefiles
-
-🔧 Local Development & Setup
-To run this project locally, follow these steps:
-
+✨ Features
+🗺️ Interactive mapping with Leaflet and proj4 for coordinate/projection handling
+⚛️ Modern frontend built with React 19, TypeScript, and Vite
+🤖 AI-assisted features powered by the @google/genai (Gemini) SDK
+🎨 Styled with Tailwind CSS and animated with Motion
+🖥️ Node/Express backend (server.ts) serving the app and API routes
+🗄️ MongoDB integration for persisting application data
+🎛️ Icons via Lucide
+🛠️ Tech Stack
+Layer	Technology
+Frontend	React 19, TypeScript, Vite, Tailwind CSS
+Mapping	Leaflet, proj4
+AI	Google Gemini (@google/genai)
+Backend	Node.js, Express, tsx
+Database	MongoDB
+Animation / UI	Motion, Lucide React
+Tooling	esbuild, TypeScript compiler
+📂 Project Structure
+District-Bageshwar/
+├── src/                  # Application source (components, map logic, etc.)
+├── index.html            # App entry HTML
+├── server.ts             # Express server entry point
+├── check-properties.js   # Utility/validation script
+├── metadata.json         # App metadata (used by AI Studio)
+├── vite.config.ts        # Vite build configuration
+├── tsconfig.json         # TypeScript configuration
+├── .env.example           # Environment variable template
+├── package.json
+└── README.md
+🚀 Getting Started
 Prerequisites
-Node.js and npm installed
-
-MongoDB instance (local or cloud-based, e.g., MongoDB Atlas)
-
+Node.js (LTS recommended)
+npm
+A Gemini API key
 Installation
-Clone the repository:
+# Clone the repository
+git clone https://github.com/RawatGitLab/District-Bageshwar.git
 
-bash
-git clone https://github.com/[your-username]/[your-repo-name].git
-cd [your-repo-name]
-Install dependencies:
+# Navigate into the project directory
+cd District-Bageshwar
 
-bash
+# Install dependencies
 npm install
-Set up environment variables:
-Create a .env file in the root directory and add your MongoDB connection string:
+Environment Variables
+Copy .env.example to .env and fill in the required values:
 
-text
-MONGODB_URI=your_mongodb_connection_string
-Seed the database (Optional):
-If you have initial shapefiles for Bageshwar, you would need to import them into your MongoDB collection. The specific script for this is not detailed in the live app but would typically be a custom import routine.
+cp .env.example .env
+Variable	Description
+GEMINI_API_KEY	Required for Gemini AI API calls
+APP_URL	The URL where the app is hosted (used for self-referential links/callbacks)
+Available Scripts
+Command	Description
+npm run dev	Start the development server (tsx server.ts)
+npm run build	Build the frontend with Vite and bundle the server with esbuild
+npm start	Run the production build (dist/server.cjs)
+npm run preview	Preview the production Vite build
+npm run lint	Type-check the project (tsc --noEmit)
+npm run clean	Remove build artifacts
+Running Locally
+npm run dev
+Then open the URL printed in your terminal (typically http://localhost:5173 or the port configured by Vite/Express).
 
-Running the Server
-Start the server locally:
-
-bash
+Building for Production
+npm run build
 npm start
-The application should now be running on http://localhost:3000 (or the port you have configured).
-
-📊 Data Synchronization Workflow
-The following diagram illustrates the high-level data flow:
-
-Data Source: The latest spatial data (shapefiles) for Bageshwar is stored in a MongoDB database.
-
-Synchronization: The server application connects to this database.
-
-Live Stream: It listens for updates and streams the geographical boundaries, rivers, and villages.
-
-Visualization: The client interface (the web page) renders this data on an interactive map.
-
 🤝 Contributing
-Contributions to improve the platform are welcome. Please follow these steps:
+Contributions are welcome!
 
-Fork the repository.
+🍴 Fork the repository
+🌿 Create a feature branch: git checkout -b feature/AmazingFeature
+💾 Commit your changes: git commit -m 'Add some AmazingFeature'
+📤 Push to the branch: git push origin feature/AmazingFeature
+🎉 Open a Pull Request
+📜 License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
-Create a new feature branch (git checkout -b feature/AmazingFeature).
+📞 Contact
+For queries or issues related to this project, reach out via the repository's Issues page.
 
-Commit your changes (git commit -m 'Add some AmazingFeature').
-
-Push to the branch (git push origin feature/AmazingFeature).
-
-Open a Pull Request.
-
-📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Built for Bageshwar District 🏔️
