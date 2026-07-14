@@ -1,6 +1,6 @@
 # 🗺️ District Bageshwar – GIS Viewer
 
-An interactive, map-based portal for **Bageshwar District**, built with React, TypeScript, Leaflet, and the Google Gemini API. The app lets citizens and administrators explore geospatial data, layers, and district information through a fast, modern web interface.
+An interactive, map-based portal for **Bageshwar District**, built with React, TypeScript and Leaflet. The app lets citizens and administrators explore geospatial data, layers, and district information through a fast, modern web interface.
 
 > **Live demo:** https://district-bageshwar.onrender.com/
 
