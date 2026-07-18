@@ -26,7 +26,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
 
   // Map & Interaction state
-  const [activeBaseMap, setActiveBaseMap] = useState<string>("osm");
+  const [activeBaseMap, setActiveBaseMap] = useState<string>("satellite");
   const [selectedFeature, setSelectedFeature] = useState<GisFeature | null>(null);
   const [hoveredFeature, setHoveredFeature] = useState<GisFeature | null>(null);
   const [isTableCollapsed, setIsTableCollapsed] = useState<boolean>(true);
@@ -244,10 +244,17 @@ export default function App() {
         fillColor = `hsl(${hue}, 70%, 65%)`;
       }
 
+      // Make all Polygon layers hollow (no fill) and white boundary color by default
+      if (type === "polygon") {
+        color = "#ffffff";
+        fillColor = "transparent";
+        fillOpacity = 0;
+      }
+
       return {
         id: `layer-${index}-${name.replace(/\s+/g, '-')}`,
         name: name,
-        visible: name === "District-Boundary" || name === "Block-Boundary" || name === "Landuse-Agriculture",
+        visible: name === "District-Boundary" || name.toLowerCase() === "district-boundary",
         type: type,
         color: color,
         fillColor: fillColor,

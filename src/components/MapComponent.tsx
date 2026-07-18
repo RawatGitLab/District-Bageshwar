@@ -276,10 +276,11 @@ export default function MapComponent({
         try {
           existingLayer.setStyle({
             color: layerConf.color,
-            fillColor: layerConf.fillColor || layerConf.color,
+            fillColor: "transparent",
+            fill: false,
             weight: layerConf.weight,
             opacity: layerConf.opacity,
-            fillOpacity: layerConf.fillOpacity * layerConf.opacity,
+            fillOpacity: 0,
           });
         } catch (styleErr) {
           console.warn(`Could not update style for existing layer ${layerConf.name}:`, styleErr);
@@ -315,10 +316,11 @@ export default function MapComponent({
           style: (feature: any) => {
             return {
               color: layerConf.color,
-              fillColor: layerConf.fillColor || layerConf.color,
+              fillColor: "transparent",
+              fill: false,
               weight: layerConf.weight,
               opacity: layerConf.opacity,
-              fillOpacity: layerConf.fillOpacity * layerConf.opacity,
+              fillOpacity: 0,
             };
           },
           pointToLayer: (feature: any, latlng: L.LatLng) => {
