@@ -91,6 +91,29 @@ async function getMongoClient() {
 // Enable JSON parser
 app.use(express.json());
 
+// API: Bageshwar Geoportal Authentication
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body || {};
+  const validUser = process.env.VITE_ADMIN_USERNAME;
+  const validPass =process.env.VITE_ADMIN_PASSWORD;
+
+  if (username && password && username === validUser && password === validPass) {
+    return res.json({
+      success: true,
+      user: {
+        username: validUser,
+        role: "GIS Administrator",
+        portal: "Bageshwar Geoportal"
+      }
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    error: "Invalid username or password"
+  });
+});
+
 // API: Debug MongoDB schema
 app.get("/api/debug", async (req, res) => {
   try {

@@ -3,6 +3,8 @@ import { GisFeature, LayerConfig, BaseMap } from "./types";
 import Sidebar from "./components/Sidebar";
 import MapComponent from "./components/MapComponent";
 import AttributeTable from "./components/AttributeTable";
+import ThemeToggle from "./components/ThemeToggle";
+import Login from "./components/Login";
 import { 
   Database, 
   Layers, 
@@ -16,7 +18,8 @@ import {
   Sparkles, 
   Info,
   ServerCrash,
-  RefreshCw
+  RefreshCw,
+  LogOut
 } from "lucide-react";
 
 export default function App() {
@@ -24,6 +27,34 @@ export default function App() {
   const [layers, setLayers] = useState<LayerConfig[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Theme state - Light mode is default for whole application
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  // Authentication state
+  const [user, setUser] = useState<{ username: string } | null>(() => {
+    const saved = localStorage.getItem("bageshwar_auth_user");
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("bageshwar_theme", theme);
+  }, [theme]);
+
+  const handleLoginSuccess = (userData: { username: string }) => {
+    setUser(userData);
+    localStorage.setItem("bageshwar_auth_user", JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("bageshwar_auth_user");
+  };
 
   // Map & Interaction state
   const [activeBaseMap, setActiveBaseMap] = useState<string>("satellite");
@@ -245,7 +276,8 @@ export default function App() {
       }
 
       // Make all Polygon layers hollow (no fill) and white boundary color by default
-      if (type === "polygon") {
+      const isPolygonLayer = type === "polygon" || lowerName.includes("boundary") || lowerName.includes("district") || lowerName.includes("block") || lowerName.includes("tehsil") || lowerName.includes("landuse");
+      if (isPolygonLayer) {
         color = "#ffffff";
         fillColor = "transparent";
         fillOpacity = 0;
@@ -299,7 +331,15 @@ export default function App() {
     setLayers((prev) => {
       return prev.map((l) => {
         if (l.id === id) {
-          // If the fill color was same as color, update it too
+          // For polygon layers, keep fill transparent and opacity 0, only change boundary color
+          if (l.type === "polygon") {
+            return {
+              ...l,
+              color: color,
+              fillColor: "transparent",
+              fillOpacity: 0
+            };
+          }
           return { 
             ...l, 
             color: color, 
@@ -325,45 +365,57 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-slate-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen w-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-hidden font-sans transition-colors relative">
       {/* Visual Navigation Header */}
-      <header className="h-14 bg-slate-900 text-slate-100 px-4 flex items-center justify-between border-b border-slate-950 shrink-0 select-none shadow-md">
+      <header className="h-14 bg-slate-900 text-slate-100 px-4 flex items-center justify-between border-b border-slate-800 shrink-0 select-none shadow-sm z-[250] relative">
         <div className="flex items-center space-x-3">
           <div className="bg-indigo-600 p-1.5 rounded-lg text-white shadow-sm flex items-center justify-center">
             <Compass className="w-5 h-5 text-indigo-100" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-extrabold tracking-tight text-white uppercase">Geography For District Planners/Administrators</span>
+              <span className="text-xs sm:text-sm font-black tracking-tight text-white uppercase">
+                Geography For District Planners/Administrators
+              </span>
               <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded border border-emerald-500/30 animate-pulse">
                 Live Server
               </span>
             </div>
-            <h2 className="text-base font-bold tracking-tight text-slate-200">District Bageshwar</h2>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-300">
+              <span>District Bageshwar</span>
+            </div>
           </div>
         </div>
 
-        {/* Global summary specs */}
-        <div className="flex items-center space-x-3 text-xs font-semibold text-slate-300">
+        {/* Global summary specs, ThemeToggle & Auth state */}
+        <div className="flex items-center space-x-2 sm:space-x-3 text-xs font-semibold">
           <button
             onClick={() => fetchFeatures(true)}
             disabled={loading}
-            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:bg-indigo-800/40 text-white font-extrabold px-3 py-1.5 rounded-lg text-xs shadow-md transition duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed select-none"
+            className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold px-2.5 sm:px-3 py-1.5 rounded-lg text-xs shadow-md transition duration-150 cursor-pointer disabled:opacity-50 select-none"
             title="Force reload all GIS layers from live MongoDB Atlas database"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            <span>Sync Database</span>
+            <span className="hidden sm:inline">Sync Database</span>
           </button>
-          <div className="hidden md:flex items-center gap-1.5 bg-slate-800 px-2.5 py-1.5 rounded-md">
-            <Layers className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Layers: <strong className="text-white font-mono">{layers.length}</strong></span>
-          </div>
-          <div className="hidden md:flex items-center gap-1.5 bg-slate-800 px-2.5 py-1.5 rounded-md">
-            <Database className="w-3.5 h-3.5 text-pink-400" />
-            <span>Entities: <strong className="text-white font-mono">{features.length}</strong></span>
+
+          <ThemeToggle theme={theme} onToggle={() => setTheme(theme === "light" ? "dark" : "light")} />
+
+          <div className="flex items-center gap-2 pl-2 border-l border-slate-700">
+            <button
+              onClick={user ? handleLogout : () => setUser({ username: "Guest" })}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer border border-red-700"
+              title={user ? "Sign Out from Bageshwar Geoportal" : "Sign In"}
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Login</span>
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Transparent Glassmorphism Login Overlay if unauthenticated */}
+      {!user && <Login onLoginSuccess={handleLoginSuccess} />}
 
       {/* Main Core GIS Workspace Layout */}
       <main className="flex-1 flex overflow-hidden min-h-0 relative">
